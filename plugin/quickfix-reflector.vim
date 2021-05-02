@@ -43,6 +43,7 @@ function! s:PrepareBuffer()
 	  setlocal modifiable
 	endif
 	let s:qfBufferLines = getline(1, '$')
+  silent doautocmd User QfPrepareBuffer
 endfunction
 
 function! s:OnWrite()
@@ -140,6 +141,7 @@ function! s:CompareEntryInBuffer(qfEntry1, qfEntry2)
 endfunction
 
 function! s:Replace(changes)
+  silent doautocmd User QfReplacementBufWritePre
 	let switchbufOriginal = &switchbuf
 	let &switchbuf = ''
 	let successfulChanges = 0
@@ -162,7 +164,6 @@ function! s:Replace(changes)
 			execute change.qfEntry.lnum . 'snomagic/\V' . commonInQfAndFile . '/' . commonInQfAndFile_replacement . '/'
 			if g:qf_write_changes == 1
 				write
-				silent doautocmd User QfReplacementBufWritePost
 			endif
 			let change.qfEntry.text = change.replacementFromQf
 			let successfulChanges += 1
@@ -188,6 +189,7 @@ function! s:Replace(changes)
 		echo ''
 		echohl None
 	endif
+  silent doautocmd User QfReplacementBufWritePost
 endfunction
 
 function! s:FindCommonContext(qfOriginal, qfChangedVersion, lineInFile)
